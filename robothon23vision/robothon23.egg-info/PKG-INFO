@@ -1,0 +1,14 @@
+Metadata-Version: 1.2
+Name: robothon23
+Version: 0.1.0
+Summary: UNKNOWN
+Home-page: None
+Author: Max Spahn
+Author-email: m.spahn@tudelft.nl
+Maintainer: None
+Maintainer-email: None
+License: UNKNOWN
+Description: # Vision for Platonics Robotthon 23
+        
+Platform: UNKNOWN
+Requires-Python: >=3.8,<=3.10

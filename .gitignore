@@ -1,0 +1,15 @@
+data
+playground/
+*.swp
+src/
+__pycache__/*
+*.pyc
+*.coverage
+dist
+build
+setup.py
+.vim/
+tags
+*.pbz2
+*.pkl
+.idea
