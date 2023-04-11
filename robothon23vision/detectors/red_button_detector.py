@@ -2,8 +2,8 @@ from dataclasses import dataclass
 import cv2
 import numpy as np
 
-from robothon23.detectors.feature_detector import FeatureDetector
-from robothon23.detectors.errors import NoCircleDetectedError, TooManyCirclesDetectedError
+from robothon23vision.detectors.feature_detector import FeatureDetector
+from robothon23vision.detectors.errors import NoCircleDetectedError, TooManyCirclesDetectedError
 
 
 @dataclass
