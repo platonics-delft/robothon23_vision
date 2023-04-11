@@ -8,10 +8,11 @@ from robothon23vision.utils.compute_tf import compute_transform
 
 class Localizer(object):
 
-    def __init__(self, img):
+    def __init__(self, img, debug=False):
         self._detected_points = {}
         self._reference_points = {}
         self._img = img
+        self._debug = debug
         self._ground_truth = {
                 'gray_area': (329, 168),
                 'red_button': (521, 158),
@@ -36,7 +37,8 @@ class Localizer(object):
                 res = detector.detect()
                 self._points.update(res)
             except DetectionError as e:
-                print(e)
+                if self._debug:
+                    print(e)
 
     def red_image(self):
         return self._red_img

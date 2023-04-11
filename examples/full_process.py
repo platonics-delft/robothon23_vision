@@ -7,7 +7,7 @@ from robothon23vision.localization.localizer import Localizer
 def main():
     file_name_0 = sys.argv[1]
     img_0 = cv2.imread(file_name_0)
-    localizer_0 = Localizer(img_0)
+    localizer_0 = Localizer(img_0, debug=True)
     localizer_0.detect_points()
 
     """
