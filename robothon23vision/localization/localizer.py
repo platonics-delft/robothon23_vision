@@ -30,6 +30,8 @@ class Localizer(object):
         for detector in self._detectors:
             detector.set_mask()
 
+    def set_ground_truth(self, ground_truth_locations: dict) -> None:
+        self._ground_truth_locations = ground_truth_locations
 
     def detect_points(self):
         for detector in self._detectors:
@@ -46,6 +48,13 @@ class Localizer(object):
     def blue_image(self):
         return self._blue_img
 
+    def pixel_locations(self) -> dict:
+        return self._detected_points
+
+    def set_coordinate_locations(self, feature_locations: dict) -> None:
+        self._feature_locations = feature_locations
+
+
     def points(self) -> np.ndarray:
         values = list(self._points.values())
         return np.transpose(np.array(values))
@@ -53,7 +62,6 @@ class Localizer(object):
     def ground_truth_points(self) -> np.ndarray:
         values = list(self._ground_truth.values())
         return np.transpose(np.array(values))
-
 
     def compute_tf(self) -> np.ndarray:
         p0 = []
@@ -74,4 +82,16 @@ class Localizer(object):
         T_gio[0:2, 0:2] = T0[0:2, 0:2]
         T_gio[0:2, 3] = T0[0:2, 2]
         return T_gio
+
+    def compute_coordinate_tf(self) -> np.ndarray:
+        p0 = []
+        p1 = []
+        for key, value in self._feature_locations.items():
+            p0.append(self._ground_truth_locations[key])
+            p1.append(value)
+        p0 = np.transpose(np.array(p0))
+        p1 = np.transpose(np.array(p1))
+        T0 = compute_transform(p0, p1)
+        return T0
+
 
