@@ -9,11 +9,11 @@ from robothon23vision.detectors.errors import NoAreaDetectedError
 @dataclass
 class GrayAreaDetectorConfig:
     kernel: bool = False
-    min_area: int = 3000
-    h_low: int = 90
+    min_area: int = 5000
+    h_low: int = 95
     s_low: int = 30
-    v_low: int = 150
-    h_high: int = 110
+    v_low: int = 120
+    h_high: int = 120
     s_high: int = 100
     v_high: int = 175
 

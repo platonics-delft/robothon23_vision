@@ -1,7 +1,6 @@
 from dataclasses import dataclass
 import cv2
 import numpy as np
-from examples.filter_hsv import get_masks
 
 from robothon23vision.detectors.feature_detector import FeatureDetector
 from robothon23vision.detectors.errors import NoCircleDetectedError, TooManyCirclesDetectedError
@@ -38,7 +37,6 @@ class SilverCircleDetector(FeatureDetector):
                 np.array([self._config.h_high, self._config.s_high, self._config.v_high]),
                 )
 
-        self._mask = get_masks(self._hsv)['silver_button']
         if self._config.kernel:
             kernel = np.ones((5,5), np.uint8)
             self._mask = cv2.morphologyEx(self._mask, cv2.MORPH_OPEN, kernel)

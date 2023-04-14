@@ -11,13 +11,13 @@ class BlueButtonDetectorConfig:
     min_radius: float = 7
     max_radius: float = 10
     circle_param_1: float = 50
-    circle_param_2: float = 10
+    circle_param_2: float = 7
     kernel: bool = False
-    h_low: int = 10
-    s_low: int = 100
-    v_low: int = 0
-    h_high: int = 175
-    s_high: int = 245
+    h_low: int = 99
+    s_low: int = 200
+    v_low: int = 150
+    h_high: int = 125
+    s_high: int = 255
     v_high: int = 255
 
 class BlueButtonDetector(FeatureDetector):

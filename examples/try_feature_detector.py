@@ -9,6 +9,7 @@ from robothon23vision.detectors.silver_circle_detector import SilverCircleDetect
 from robothon23vision.detectors.gray_area_detector import GrayAreaDetector
 from robothon23vision.detectors.red_button_detector import RedButtonDetector
 from robothon23vision.detectors.blue_area_detector import BlueAreaDetector
+from robothon23vision.detectors.white_circle_detector import WhiteCircleDetector
 from robothon23vision.detectors.errors import *
 
 detector_map = {
@@ -18,6 +19,7 @@ detector_map = {
         'gray_area': GrayAreaDetector,
         'red_button': RedButtonDetector,
         'blue_area': BlueAreaDetector,
+        'white_circle': WhiteCircleDetector,
         }
 
 def main():

@@ -71,6 +71,7 @@ class Localizer(object):
             p1.append(value)
         p0 = np.transpose(np.array(p0))
         p1 = np.transpose(np.array(p1))
+        breakpoint()
         T0 = compute_transform(p0, p1)
         #T0[0:2, 2] /= self._pixel_cm_factor
         return T0

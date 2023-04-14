@@ -7,34 +7,34 @@ from robothon23vision.detectors.errors import NoCircleDetectedError, TooManyCirc
 
 
 @dataclass
-class RedButtonDetectorConfig:
-    min_radius: float = 9
-    max_radius: float = 15
-    circle_param_1: float = 20
-    circle_param_2: float = 13
+class WhiteCircleDetectorConfig:
+    min_radius: float = 16
+    max_radius: float = 25
+    circle_param_1: float = 50
+    circle_param_2: float = 9
     kernel: bool = False
-    h_low: int = 150
-    s_low: int = 80
-    v_low: int = 100
-    h_up: int = 240
-    s_up: int = 200
+    h_low: int = 90
+    s_low: int = 50
+    v_low: int = 190
+    h_up: int = 105
+    s_up: int = 140
     v_up: int = 255
 
-class RedButtonDetector(FeatureDetector):
+class WhiteCircleDetector(FeatureDetector):
     def __init__(self, img_in, **config):
-        super().__init__(img_in, 'red_button')
-        self._config = RedButtonDetectorConfig(**config)
+        super().__init__(img_in, 'white_circle')
+        self._config = WhiteCircleDetectorConfig(**config)
 
     def set_mask(self) -> None:
         self._hsv = cv2.cvtColor(self._img, cv2.COLOR_BGR2HSV)
 
-        mask_0 = cv2.inRange(
+        # Detect circles using HoughCircles
+
+        self._mask = cv2.inRange(
                 self._hsv,
                 np.array([self._config.h_low, self._config.s_low, self._config.v_low]),
                 np.array([self._config.h_up, self._config.s_up, self._config.v_up]),
                 )
-        self._mask = mask_0
-
         if self._config.kernel:
             kernel = np.ones((5,5), np.uint8)
             self._mask = cv2.morphologyEx(self._mask, cv2.MORPH_OPEN, kernel)
@@ -57,35 +57,28 @@ class RedButtonDetector(FeatureDetector):
         self._filtered_img = cv2.bitwise_and(self._img, self._img, mask=self._mask)
 
         if circles is None:
-            raise NoCircleDetectedError("No red button detected.")
+            raise NoCircleDetectedError("No white circle detected.")
         else:
-            if not circles.shape == (1, 2, 3):
+            if not circles.shape == (1, 1, 3):
                 circles = np.uint16(np.around(circles))
                 for circle in circles[0, :]:
                     cv2.circle(self._filtered_img, (circle[0], circle[1]), circle[2], (0, 255, 0), 2)
                     cv2.circle(self._filtered_img, (circle[0], circle[1]), 2, (0, 0, 255), 3)
-                raise TooManyCirclesDetectedError("Too many red circles detected.")
-            else:
-                circles = np.uint16(np.around(circles))
-                # Selecting logic if there are too circles use highest y coordinate
-                circle_0 = circles[0, 0, :]
-                circle_1 = circles[0, 1, :]
+                raise TooManyCirclesDetectedError("Too many white circles detected.")
+            # Draw the outer circle
+            circle = (
+                    int(circles[:, 0, 0]),
+                    int(circles[:, 0, 1]),
+                    int(circles[:, 0, 2])
+                    )
+            cv2.circle(
+                    self._img,
+                    circle[0:2],
+                    circle[2],
+                     (0, 255, 0),
+                     2)
+            cv2.circle(self._img, circle[0:2], 2, (0, 0, 255), 3)
 
-                red_button = (
-                        int(0.5 * circle_0[0] + 0.5 * circle_1[0] ),
-                        int(0.5 * circle_0[1] + 0.5 * circle_1[1]),
-                        int(0.5 * circle_0[2] + 0.5 * circle_1[2])
-                        )
-                cv2.circle(
-                        self._img,
-                        red_button[0:2],
-                        red_button[2],
-                         (0, 255, 255),
-                         2)
-                cv2.circle(self._img, red_button[0:2], 2, (0, 255, 255), 3)
-
-                results = {
-                        self._name:  red_button[0:2],
-                        }
-                return results
+        results = {self._name: circle[0:2]}
+        return results
 
