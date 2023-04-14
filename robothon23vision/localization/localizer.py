@@ -18,11 +18,11 @@ class Localizer(object):
                 'blue_button': (522, 138),
                 'blue_area': (523, 215),
         }
-        self._pixel_cm_factor = 320.0/0.25
+        self._pixel_cm_factor = 492.0/0.25
         self._points = {}
 
     def set_ground_truth(self, ground_truth_locations: dict) -> None:
-        self._ground_truth_locations = ground_truth_locations
+        self._ground_truth = ground_truth_locations
 
     def set_image(self, img) -> None:
         self._img = img
@@ -70,10 +70,10 @@ class Localizer(object):
         p1 = []
         for key, value in self._points.items():
             p0.append(self._ground_truth[key])
-            p1.append(value)
+            value_tf = [value[0] - 640, value[1] - 360]
+            p1.append(value_tf)
         p0 = np.transpose(np.array(p0))
         p1 = np.transpose(np.array(p1))
-        breakpoint()
         T0 = compute_transform(p0, p1)
         #T0[0:2, 2] /= self._pixel_cm_factor
         return T0
