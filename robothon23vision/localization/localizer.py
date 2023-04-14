@@ -8,10 +8,9 @@ from robothon23vision.utils.compute_tf import compute_transform
 
 class Localizer(object):
 
-    def __init__(self, img, debug=False):
+    def __init__(self, debug=False):
         self._detected_points = {}
         self._reference_points = {}
-        self._img = img
         self._debug = debug
         self._ground_truth = {
                 'gray_area': (329, 168),
@@ -21,6 +20,12 @@ class Localizer(object):
         }
         self._pixel_cm_factor = 320.0/0.25
         self._points = {}
+
+    def set_ground_truth(self, ground_truth_locations: dict) -> None:
+        self._ground_truth_locations = ground_truth_locations
+
+    def set_image(self, img) -> None:
+        self._img = img
         self._detectors = []
         self._detectors.append(RedButtonDetector(self._img))
         self._detectors.append(BlueButtonDetector(self._img))
@@ -29,9 +34,6 @@ class Localizer(object):
 
         for detector in self._detectors:
             detector.set_mask()
-
-    def set_ground_truth(self, ground_truth_locations: dict) -> None:
-        self._ground_truth_locations = ground_truth_locations
 
     def detect_points(self):
         for detector in self._detectors:
@@ -88,8 +90,8 @@ class Localizer(object):
         p0 = []
         p1 = []
         for key, value in self._feature_locations.items():
-            p0.append(self._ground_truth_locations[key])
-            p1.append(value)
+            p0.append(list(self._ground_truth_locations[key])[0:3])
+            p1.append(list(value[0:3]))
         p0 = np.transpose(np.array(p0))
         p1 = np.transpose(np.array(p1))
         T0 = compute_transform(p0, p1)
