@@ -6,6 +6,8 @@ from robothon23vision.detectors.gray_area_detector import GrayAreaDetector
 from robothon23vision.detectors.red_button_detector import RedButtonDetector
 from robothon23vision.utils.compute_tf import compute_transform
 
+feature_map = {'gray_area': 0, 'red_button': 1, 'blue_button': 2, 'blue_area': 3}
+
 class Localizer(object):
 
     def __init__(self, debug=False):
@@ -19,7 +21,20 @@ class Localizer(object):
                 'blue_area': (523, 215),
         }
         self._pixel_cm_factor = 492.0/0.25
+        self._distance_matrix = self.compute_distance_matrix(self._ground_truth)
+        print(self._distance_matrix)
         self._points = {}
+
+    def compute_distance_matrix(self, points: dict) -> np.ndarray:
+        distance_matrix = np.ones((4, 4)) * 10000
+        for key_i, item_i in points.items():
+            for key_j, item_j in points.items():
+                dist_ij = np.linalg.norm(np.array(item_i) - np.array(item_j))
+                i = feature_map[key_i]
+                j = feature_map[key_j]
+                distance_matrix[i, j] = dist_ij
+                distance_matrix[j, i] = dist_ij
+        return distance_matrix
 
     def set_ground_truth(self, ground_truth_locations: dict) -> None:
         self._ground_truth = ground_truth_locations
@@ -36,13 +51,20 @@ class Localizer(object):
             detector.set_mask()
 
     def detect_points(self):
+        points = {}
         for detector in self._detectors:
             try:
                 res = detector.detect()
-                self._points.update(res)
+                points.update(res)
             except DetectionError as e:
                 if self._debug:
                     print(e)
+        distance_matrix = self.compute_distance_matrix(points)
+        difference_matrix = np.abs(distance_matrix - self._distance_matrix)
+        index = difference_matrix < 100
+        print(difference_matrix)
+
+        self._points = points
 
     def red_image(self):
         return self._red_img
