@@ -59,10 +59,11 @@ class Localizer(object):
             except DetectionError as e:
                 if self._debug:
                     print(e)
+        print(points)
         distance_matrix = self.compute_distance_matrix(points)
         difference_matrix = np.abs(distance_matrix - self._distance_matrix)
         index = difference_matrix < 100
-        print(difference_matrix)
+        #print(difference_matrix)
 
         self._points = points
 
