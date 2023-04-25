@@ -15,12 +15,18 @@ class Localizer(object):
         self._pixel_m_factor = 1/0.0011559324339032173
         self._pixel_m_factor = 492/0.25
         self._pixel_m_factor = 700/0.25
-        self._pixel_m_factor = 1/0.0005349688581191003
+        self._box_depth = 0.48
+        self._fx = 923.1104125976562
+        self._fy = 923.418212890625
+        self._pixel_m_factor_u =  self._fx / self._box_depth
+        self._pixel_m_factor_v =  self._fy / self._box_depth
 
 
         h, w = self._full_template.shape
-        cropped_h = [100, 600]
-        cropped_w = [300, 980]
+        #cropped_h = [50, 520]
+        #cropped_w = [400, 1180]
+        cropped_h = [70, 473]
+        cropped_w = [515, 1055]
         self._template = self._full_template[
             cropped_h[0] : cropped_h[1], cropped_w[0] : cropped_w[1]
         ]
@@ -54,7 +60,7 @@ class Localizer(object):
         # store all the good matches as per Lowe's ratio test.
         good = []
         for m, n in matches:
-            if m.distance < 0.3 * n.distance:
+            if m.distance < 0.7 * n.distance:
                 good.append(m)
 
         # translate keypoints back to full source template
@@ -86,15 +92,19 @@ class Localizer(object):
         return self._dst_pts
 
     def compute_tf(self) -> np.ndarray:
-        p0 = np.transpose(np.array(self._src_pts))[:, 0, :] - np.array(self._full_template.shape)[:, None]/2
-        p1 = np.transpose(np.array(self._dst_pts))[:, 0, :] - np.array(self._full_template.shape)[:, None]/2
+        cx_cy_array = np.array([[639.329345703125], [376.771240234375]])
+        p0 = np.transpose(np.array(self._src_pts))[:, 0, :] - cx_cy_array
+
+        # print("pixel coords", self._src_pts, self._full_template.shape)
+        p1 = np.transpose(np.array(self._dst_pts))[:, 0, :] - cx_cy_array 
         T0 = compute_transform(p0, p1)
         #T0[0:2, 2] /= self._pixel_m_factor
         return T0
 
     def compute_full_tf_in_m(self) -> np.ndarray:
         T0 = self.compute_tf()
-        T0[0:2, 2] /= self._pixel_m_factor
+        T0[0, 2] /= self._pixel_m_factor_u
+        T0[1, 2] /= self._pixel_m_factor_v
         T_gio = np.identity(4)
         T_gio[0:2, 0:2] = T0[0:2, 0:2]
         T_gio[0:2, 3] = T0[0:2, 2]

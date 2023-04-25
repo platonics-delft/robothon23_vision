@@ -1,6 +1,7 @@
 import numpy as np
 from scipy.optimize import least_squares
 import numpy as np
+import cv2
 
 def compute_transform(points: np.ndarray, transformed_points: np.ndarray):
     assert isinstance(points, np.ndarray)
@@ -9,7 +10,12 @@ def compute_transform(points: np.ndarray, transformed_points: np.ndarray):
     n = int(points.shape[1])
     points_out = np.concatenate((transformed_points, np.ones((1, n))), axis=0)
     points_in = np.concatenate((points, np.ones((1, n))), axis=0)
-    return np.dot(points_out, np.linalg.pinv(points_in))
+    cv2_matrix, inliers = cv2.estimateAffinePartial2D(points.T, transformed_points.T)
+    # print("points", points)
+    # print("cv2 matrix", cv2_matrix)
+    transform_pixels = np.dot(points_out, np.linalg.pinv(points_in))
+    # print('transformation_pixels', transform_pixels)
+    return cv2_matrix
 
 def main():
 
