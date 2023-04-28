@@ -7,7 +7,7 @@ MIN_MATCH_COUNT = 2
 
 class Localizer(object):
 
-    def __init__(self, template):
+    def __init__(self, template, cropping):
         assert isinstance(template, str)
         self._full_template = cv2.imread(template, 0)
 
@@ -15,7 +15,7 @@ class Localizer(object):
         self._pixel_m_factor = 1/0.0011559324339032173
         self._pixel_m_factor = 492/0.25
         self._pixel_m_factor = 700/0.25
-        self._box_depth = 0.48
+        self._box_depth = 0.482
         self._fx = 923.1104125976562
         self._fy = 923.418212890625
         self._pixel_m_factor_u =  self._fx / self._box_depth
@@ -25,8 +25,13 @@ class Localizer(object):
         h, w = self._full_template.shape
         #cropped_h = [50, 520]
         #cropped_w = [400, 1180]
-        cropped_h = [70, 473]
-        cropped_w = [515, 1055]
+        # cropped_h = [70, 473]
+        # cropped_w = [515, 1055]
+        cropped_h = cropping[2:]
+        cropped_w = cropping[:2]
+
+
+
         self._template = self._full_template[
             cropped_h[0] : cropped_h[1], cropped_w[0] : cropped_w[1]
         ]
@@ -93,6 +98,8 @@ class Localizer(object):
 
     def compute_tf(self) -> np.ndarray:
         cx_cy_array = np.array([[639.329345703125], [376.771240234375]])
+        # cx_cy_array = np.array([[640], [360.]])
+
         p0 = np.transpose(np.array(self._src_pts))[:, 0, :] - cx_cy_array
 
         # print("pixel coords", self._src_pts, self._full_template.shape)
