@@ -1,4 +1,4 @@
-# Vision for Platonics Robotthon 23
+# Vision for Platonics Robothon 23
 
 ## Installation
 
