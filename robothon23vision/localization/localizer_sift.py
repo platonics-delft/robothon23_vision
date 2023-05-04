@@ -12,10 +12,10 @@ class Localizer(object):
         self._full_template = cv2.imread(template, 0)
 
 
-        self._pixel_m_factor = 1/0.0011559324339032173
-        self._pixel_m_factor = 492/0.25
-        self._pixel_m_factor = 700/0.25
-        self._box_depth = 0.482
+        # self._pixel_m_factor = 1/0.0011559324339032173
+        # self._pixel_m_factor = 492/0.25
+        # self._pixel_m_factor = 700/0.25
+        self._box_depth = 0.461
         self._fx = 923.1104125976562
         self._fy = 923.418212890625
         self._pixel_m_factor_u =  self._fx / self._box_depth
